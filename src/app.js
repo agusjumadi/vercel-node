@@ -6,11 +6,12 @@ const PORT = 8000;
 
 const app = express();
 const router = express.Router()
-const admins = ['demohexa@gmail.com']
+const admins = []
 
 
 function isAdmin(userInfo) {
-    return admins.indexOf(userInfo.email) >= 0;
+    //return admins.indexOf(userInfo.email) >= 0;
+    return true
 }
 
 let authRequired = async(req, res, next) => {
@@ -18,17 +19,14 @@ let authRequired = async(req, res, next) => {
     const token = req.headers['x-auth']
     try {
         let decodedToken = await getAuth().verifyIdToken(token);
-        console.log(decodedToken)
         if (isAdmin(decodedToken)) next()
         else next('router')
     } catch (e) {
         return next('router')
     }
-
 }
 
 router.use(authRequired)
-
 router.get('/user/:id', (req, res) => {
     res.send('hello, user!')
 })
